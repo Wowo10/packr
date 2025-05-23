@@ -32,7 +32,7 @@ func TestImportPacks(t *testing.T) {
 		t.Errorf("expected 3 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 200 || packs[2] != 300 {
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 {
 		t.Errorf("expected packs 100, 200 and 300 to be imported, got %v", packs)
 	}
 }
@@ -44,7 +44,7 @@ func TestPacksAreSorted(t *testing.T) {
 		t.Errorf("expected 3 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 200 || packs[2] != 300 {
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 {
 		t.Errorf("expected packs to be sorted, got %v", packs)
 	}
 
@@ -54,7 +54,7 @@ func TestPacksAreSorted(t *testing.T) {
 		t.Errorf("expected 4 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 150 || packs[2] != 200 || packs[3] != 300 {
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 150 || packs[3] != 100 {
 		t.Errorf("expected packs to be sorted, got %v", packs)
 	}
 }
@@ -66,7 +66,7 @@ func TestImportPacksDuplicatesAllowed(t *testing.T) {
 		t.Errorf("expected 3 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 200 || packs[2] != 300 {
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 {
 		t.Errorf("expected packs 100, 200 and 300 to be imported, got %v", packs)
 	}
 
@@ -78,8 +78,8 @@ func TestImportPacksDuplicatesAllowed(t *testing.T) {
 		t.Errorf("expected 4 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 100 || packs[2] != 100 || packs[3] != 200 || packs[4] != 300 {
-		t.Errorf("expected packs 100, 100, 100, 200 and 300 to be imported, got %v", packs)
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 || packs[3] != 100 || packs[4] != 100 {
+		t.Errorf("expected packs 300, 200, 100, 100 and 100 to be imported, got %v", packs)
 	}
 }
 
@@ -90,7 +90,63 @@ func TestImportPacksWithNans(t *testing.T) {
 		t.Errorf("expected 2 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 100 || packs[1] != 300 {
+	if packs[0] != 300 || packs[1] != 100 {
 		t.Errorf("expected packs 100 and 300 to be imported, got %v", packs)
+	}
+}
+
+func TestSolve(t *testing.T) {
+	store.ImportPacks("100,200,300")
+	solution := store.Solve(1000)
+	if solution[100] != 1 || solution[200] != 0 || solution[300] != 3 {
+		t.Errorf("expected solution to be {100: 1, 200: 0, 300: 3}, got %v", solution)
+	}
+}
+
+func TestSolve2(t *testing.T) {
+	store.ImportPacks("250, 500, 1000, 2000, 5000")
+	solution := store.Solve(1)
+	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
+		t.Errorf("expected solution to be {250: 1, 500: 0, 1000: 0, 2000: 0, 5000: 0}, got %v", solution)
+	}
+}
+
+func TestSolve3(t *testing.T) {
+	store.ImportPacks("250, 500, 1000, 2000, 5000")
+	solution := store.Solve(250)
+	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
+		t.Errorf("expected solution to be {250: 1, 500: 0, 1000: 0, 2000: 0, 5000: 0}, got %v", solution)
+	}
+}
+
+func TestSolve4(t *testing.T) {
+	store.ImportPacks("250, 500, 1000, 2000, 5000")
+	solution := store.Solve(251)
+	if solution[250] != 0 || solution[500] != 1 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
+		t.Errorf("expected solution to be {250: 0, 500: 1, 1000: 0, 2000: 0, 5000: 0}, got %v", solution)
+	}
+}
+
+func TestSolve5(t *testing.T) {
+	store.ImportPacks("250, 500, 1000, 2000, 5000")
+	solution := store.Solve(501)
+	if solution[250] != 1 || solution[500] != 1 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
+		t.Errorf("expected solution to be {250: 1, 500: 1, 1000: 0, 2000: 0, 5000: 0}, got %v", solution)
+	}
+}
+
+func TestSolve6(t *testing.T) {
+	store.ImportPacks("250, 500, 1000, 2000, 5000")
+	solution := store.Solve(12001)
+	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 1 || solution[5000] != 2 {
+		t.Errorf("expected solution to be {250: 1, 500: 0, 1000: 0, 2000: 1, 5000: 2}, got %v", solution)
+	}
+}
+
+func TestSolve7(t *testing.T) {
+	store.ImportPacks("23, 31, 53")
+	solution := store.Solve(500000)
+	if solution[23] != 2 || solution[31] != 7 || solution[53] != 9429 {
+		t.Errorf("expected solution to be {23: 2, 31: 7, 53: 9429}, got %v", solution)
 	}
 }

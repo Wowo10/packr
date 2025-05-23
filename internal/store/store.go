@@ -14,7 +14,7 @@ func ImportPacks(packsStr string) {
 	pkgInts = []int{}
 
 	if packsStr == "" {
-		pkgInts = append(pkgInts, 250, 500, 1000, 2000, 5000)
+		pkgInts = append(pkgInts, 5000, 2000, 1000, 500, 250)
 		return
 	}
 
@@ -31,8 +31,8 @@ func ImportPacks(packsStr string) {
 		pkgInts = append(pkgInts, intV)
 	}
 
-	// Sort the pkgInts slice in ascending order
-	sort.Ints(pkgInts)
+	// Sort the pkgInts slice in descending order
+	sort.Sort(sort.Reverse(sort.IntSlice(pkgInts)))
 }
 
 func GetPacks() []int {
@@ -41,7 +41,7 @@ func GetPacks() []int {
 
 func AddPack(pack int) {
 	for i, v := range pkgInts {
-		if v > pack {
+		if v < pack {
 			pkgInts = append(pkgInts[:i], append([]int{pack}, pkgInts[i:]...)...)
 			return
 		}
@@ -57,4 +57,13 @@ func RemovePack(pack int) {
 			return
 		}
 	}
+}
+
+func Solve(amount int) map[int]int {
+
+	return getOptimalPacks(pkgInts, amount)
+}
+
+func getOptimalPacks(packSizes []int, orderAmount int) map[int]int {
+	return make(map[int]int)
 }
