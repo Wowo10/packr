@@ -76,6 +76,11 @@ func (s *Server) GetSolutionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if amount < 1 {
+		http.Error(w, "amount must be greater than 0", http.StatusBadRequest)
+		return
+	}
+
 	resp := struct {
 		Solution map[int]int `json:"solution"`
 	}{
@@ -96,6 +101,11 @@ func (s *Server) PostPacksHandler(w http.ResponseWriter, r *http.Request) {
 	pack, err := strconv.Atoi(packStr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if pack < 1 {
+		http.Error(w, "pack must be greater than 0", http.StatusBadRequest)
 		return
 	}
 
