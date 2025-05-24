@@ -43,8 +43,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 func (s *Server) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		//TODO: Replace with real APIKEY
-		if r.Header.Get("X-Api-Key") != "secret" {
+		if r.Header.Get("X-Api-Key") != s.apiKey {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
