@@ -28,11 +28,32 @@ Run the test suite:
 make test
 ```
 
+## Running FrontEnd
+
+The Front end is a simple Svelte web app.
+To run it you will need node installed.
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+To build the app:
+```bash
+npx vite build
+```
+The build is done in client/dist folder as a target.
+
 ## Environment Variables
 
 The solution uses Environment variables to control the init state fo the app.
-You can setup the PORT, INIT_PACKS and API_KEY.
-On development environment just use .env file to setup those.
+You can setup the PORT, INIT_PACKS and API_KEY for Backend.
+You can setup VITE_API_KEY and VITE_API_BASE_URL for Frontend
+
+On development environment just use .env file to setup those, theres .env.template file in repository with example values, just rename it to .env
+Frontend and backend has separate .env files.
+
 
 INIT_PACKS are just packs delimited with comma
 
@@ -54,7 +75,7 @@ docker run -p 7000:7000 packr-api
 
 You can supply environment variables:
 ```bash
-docker run -e API_KEY=secret -e INIT_PACKS=10,100,1000 -p 7000:7000 packr-api
+docker run -e API_KEY=secret -e INIT_PACKS=10,100,1000 -e PORT=7000 -p 7000:7000 packr-api
 ```
 
 ## API
