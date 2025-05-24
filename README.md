@@ -88,6 +88,7 @@ curl -X POST http://localhost:7000/api/packs?pack=500
 ```
 
 For valid request is HTTP status 201
+
 For NAN, 0 and negative numbers status 400 with reason in body
 
 ### DELETE /api/packs
@@ -100,6 +101,7 @@ curl -X DELETE http://localhost:7000/api/packs?pack=500
 ```
 
 For valid request is HTTP status 200
+
 For NAN, 0 and negative numbers status 400 with reason in body
 
 ### GET /api/solution
@@ -117,4 +119,5 @@ example response
 ```
 
 For valid request is HTTP status 200
+
 For NAN, 0 and negative numbers status 400 with reason in body
