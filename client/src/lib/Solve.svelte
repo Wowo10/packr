@@ -1,13 +1,12 @@
 <script lang="ts">
-    import ConfirmButton from "./common/ConfirmButton.svelte";
-
     let amountInput = 0;
     let solution: any = {}; //TODO: Add typing
+    const baseurl = import.meta.env.VITE_API_BASE_URL;
 
     const getSolution = async () => {
         try {
             const response = await fetch(
-                "/api/solution?amount=" + amountInput,
+                baseurl + "/api/solution?amount=" + amountInput,
                 {
                     headers: {
                         "X-Api-Key": import.meta.env.VITE_API_KEY,

@@ -2,12 +2,14 @@
     import { onMount } from "svelte";
     import ConfirmButton from "./common/ConfirmButton.svelte";
 
+    const baseurl = import.meta.env.VITE_API_BASE_URL;
+
     let packs: number[] = [];
     let addPackInput = 0;
 
     const getPacks = async () => {
         try {
-            const response = await fetch("/api/packs", {
+            const response = await fetch(baseurl + "/api/packs", {
                 headers: {
                     "X-Api-Key": import.meta.env.VITE_API_KEY,
                 },
@@ -27,7 +29,7 @@
 
     const deletePack = async (pack: number) => {
         try {
-            const res = await fetch("/api/packs?pack=" + pack, {
+            const res = await fetch(baseurl + "/api/packs?pack=" + pack, {
                 method: "DELETE",
                 headers: {
                     "X-Api-Key": import.meta.env.VITE_API_KEY,
@@ -46,7 +48,7 @@
 
     const addPack = async (pack: number) => {
         try {
-            const res = await fetch("/api/packs?pack=" + pack, {
+            const res = await fetch(baseurl + "/api/packs?pack=" + pack, {
                 method: "POST",
                 headers: {
                     "X-Api-Key": import.meta.env.VITE_API_KEY,
