@@ -2,7 +2,7 @@ package store
 
 import (
 	"log"
-	"math"
+	"maps"
 	"slices"
 	"sort"
 	"strconv"
@@ -67,79 +67,63 @@ func Solve(amount int) map[int]int {
 	return getOptimalPacks(pkgInts, amount)
 }
 
-// TODO: Need another approach, doesn`t work for the edge case`
-func getOptimalPacks(packSizes []int, orderAmount int) map[int]int {
-	sort.Slice(packSizes, func(i, j int) bool {
-		return packSizes[i] > packSizes[j]
-	})
-
-	result := make(map[int]int)
-
-	//try greedy approach
-	for _, pack := range packSizes {
-		count := orderAmount / pack
-		result[pack] = count
-		orderAmount %= pack
-	}
-
-	//find overfill if needed
-	if orderAmount > 0 {
-		incrementMinimalOverfill(result, packSizes)
-	}
-
-	return result
+type dpState struct {
+	sumItems  int
+	packCount int
+	packMap   map[int]int
 }
 
-func incrementMinimalOverfill(solution map[int]int, packSizes []int) {
-	// Find the highest filled pack
-	// Try incrementing the next larger pack size and zero out smaller ones
-	// Choose the configuration with the smallest total sum,
-	// breaking ties using the lowest number of packs
+func getOptimalPacks(packSizes []int, orderAmount int) map[int]int {
+	// assume descending order
+	maxPack := packSizes[0]
+	limit := orderAmount + maxPack
 
-	minSum := math.MaxInt
-	minNumber := math.MaxInt
-	minIndex := 0
+	dp := make(map[int]*dpState, limit+1)
+	dp[0] = &dpState{0, 0, map[int]int{}}
 
-	startIndex := len(packSizes) - 1
+	queue := []int{0}
 
-	for i, pack := range packSizes {
-		if solution[pack] > 0 {
-			if i == 0 {
-				startIndex = 0
-			} else {
-				startIndex = i - 1
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+
+		for _, pack := range packSizes {
+			newTotal := current + pack
+			if newTotal > limit {
+				continue
 			}
-			break
+
+			// Copy previous state, increment pack count and packMap[pack]
+			newPackMap := make(map[int]int)
+			maps.Copy(newPackMap, dp[current].packMap)
+			newPackMap[pack]++
+
+			newPackCount := dp[current].packCount + 1
+
+			// Save to dp table if new state is better
+			if dp[newTotal] == nil ||
+				newTotal < dp[newTotal].sumItems ||
+				(newTotal == dp[newTotal].sumItems && newPackCount < dp[newTotal].packCount) {
+
+				dp[newTotal] = &dpState{
+					sumItems:  newTotal,
+					packCount: newPackCount,
+					packMap:   newPackMap,
+				}
+
+				queue = append(queue, newTotal)
+			}
 		}
 	}
 
-	for i := startIndex; i < len(packSizes); i++ {
-		sum := 0
-		number := 0
-		for j := range i {
-			sum = sum + solution[packSizes[j]]*packSizes[j]
-			number = number + solution[packSizes[j]]
-		}
-
-		nextCount := solution[packSizes[i]] + 1
-		sum += nextCount * packSizes[i]
-		number += nextCount
-
-		if sum < minSum {
-			minSum = sum
-			minNumber = number
-			minIndex = i
-		} else if sum == minSum && number < minNumber {
-			minNumber = number
-			minIndex = i
+	// Return the best valid option => orderQty
+	for i := orderAmount; i <= limit; i++ {
+		if dp[i] != nil {
+			return dp[i].packMap
 		}
 	}
 
-	solution[packSizes[minIndex]] = solution[packSizes[minIndex]] + 1
+	// Can't happen
+	return nil
 
-	for i := minIndex + 1; i < len(packSizes); i++ {
-		solution[packSizes[i]] = 0
-	}
-
-	return
 }
