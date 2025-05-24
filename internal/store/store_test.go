@@ -33,7 +33,7 @@ func TestImportPacks(t *testing.T) {
 	}
 
 	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 {
-		t.Errorf("expected packs 100, 200 and 300 to be imported, got %v", packs)
+		t.Errorf("expected packs 300, 200 and 100 to be imported, got %v", packs)
 	}
 }
 
@@ -59,7 +59,7 @@ func TestPacksAreSorted(t *testing.T) {
 	}
 }
 
-func TestImportPacksDuplicatesAllowed(t *testing.T) {
+func TestImportPacksDuplicatesNotAllowed(t *testing.T) {
 	store.ImportPacks("100,200,300")
 	packs := store.GetPacks()
 	if len(packs) != 3 {
@@ -74,12 +74,12 @@ func TestImportPacksDuplicatesAllowed(t *testing.T) {
 	store.AddPack(100)
 
 	packs = store.GetPacks()
-	if len(packs) != 5 {
-		t.Errorf("expected 4 packs, got %d", len(packs))
+	if len(packs) != 3 {
+		t.Errorf("expected 3 packs, got %d", len(packs))
 	}
 
-	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 || packs[3] != 100 || packs[4] != 100 {
-		t.Errorf("expected packs 300, 200, 100, 100 and 100 to be imported, got %v", packs)
+	if packs[0] != 300 || packs[1] != 200 || packs[2] != 100 {
+		t.Errorf("expected packs 100, 200 and 300 to be imported, got %v", packs)
 	}
 }
 
@@ -91,7 +91,7 @@ func TestImportPacksWithNans(t *testing.T) {
 	}
 
 	if packs[0] != 300 || packs[1] != 100 {
-		t.Errorf("expected packs 100 and 300 to be imported, got %v", packs)
+		t.Errorf("expected packs 300 and 100 to be imported, got %v", packs)
 	}
 }
 
@@ -104,6 +104,14 @@ func TestSolve(t *testing.T) {
 }
 
 func TestSolve2(t *testing.T) {
+	store.ImportPacks("100,200,300")
+	solution := store.Solve(1001)
+	if solution[100] != 0 || solution[200] != 1 || solution[300] != 3 {
+		t.Errorf("expected solution to be {100: 1, 200: 0, 300: 3}, got %v", solution)
+	}
+}
+
+func TestSolve3(t *testing.T) {
 	store.ImportPacks("250, 500, 1000, 2000, 5000")
 	solution := store.Solve(1)
 	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
@@ -111,7 +119,7 @@ func TestSolve2(t *testing.T) {
 	}
 }
 
-func TestSolve3(t *testing.T) {
+func TestSolve4(t *testing.T) {
 	store.ImportPacks("250, 500, 1000, 2000, 5000")
 	solution := store.Solve(250)
 	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
@@ -119,7 +127,7 @@ func TestSolve3(t *testing.T) {
 	}
 }
 
-func TestSolve4(t *testing.T) {
+func TestSolve5(t *testing.T) {
 	store.ImportPacks("250, 500, 1000, 2000, 5000")
 	solution := store.Solve(251)
 	if solution[250] != 0 || solution[500] != 1 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
@@ -127,7 +135,7 @@ func TestSolve4(t *testing.T) {
 	}
 }
 
-func TestSolve5(t *testing.T) {
+func TestSolve6(t *testing.T) {
 	store.ImportPacks("250, 500, 1000, 2000, 5000")
 	solution := store.Solve(501)
 	if solution[250] != 1 || solution[500] != 1 || solution[1000] != 0 || solution[2000] != 0 || solution[5000] != 0 {
@@ -135,7 +143,7 @@ func TestSolve5(t *testing.T) {
 	}
 }
 
-func TestSolve6(t *testing.T) {
+func TestSolve7(t *testing.T) {
 	store.ImportPacks("250, 500, 1000, 2000, 5000")
 	solution := store.Solve(12001)
 	if solution[250] != 1 || solution[500] != 0 || solution[1000] != 0 || solution[2000] != 1 || solution[5000] != 2 {
@@ -143,7 +151,7 @@ func TestSolve6(t *testing.T) {
 	}
 }
 
-func TestSolve7(t *testing.T) {
+func TestSolve8(t *testing.T) {
 	store.ImportPacks("23, 31, 53")
 	solution := store.Solve(500000)
 	if solution[23] != 2 || solution[31] != 7 || solution[53] != 9429 {
