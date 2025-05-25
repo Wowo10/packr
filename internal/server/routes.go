@@ -36,6 +36,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	})
 
 	store.ImportPacks(os.Getenv("INIT_PACKS"))
+	store.LoadFile()
 
 	return r
 }

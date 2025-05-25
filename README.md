@@ -61,6 +61,11 @@ INIT_PACKS are just packs delimited with comma
 INIT_PACKS=10,100,1000
 ```
 
+## Data Persistency
+
+The app will save its state every time to a file. Every load of the app it overwrites any Initial state with persisted one.
+To clear the state just remove /data/save file.
+
 ## Docker
 
 To run the app as a docker container simply build it:
@@ -76,6 +81,11 @@ docker run -p 7000:7000 packr-api
 You can supply environment variables:
 ```bash
 docker run -e API_KEY=secret -e INIT_PACKS=10,100,1000 -e PORT=7000 -p 7000:7000 packr-api
+```
+
+In order to run container with data persistency you need to supply it with volume
+```bash
+docker run -p 7000:7000 -v $(pwd)/data:/app/data packr-api
 ```
 
 ## API
